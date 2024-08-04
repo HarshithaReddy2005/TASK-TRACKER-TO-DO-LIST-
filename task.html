@@ -1,0 +1,206 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .input-section {
+            grid-column: span 2;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: #3b51ce;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #1b94cc;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            display: flex;
+            flex-direction: column;
+            padding: 8px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+
+        .completed li {
+            background-color: #d4edda;
+            color: black;
+        }
+
+        .delete-btn, .edit-btn {
+            background-color: #d9534f;
+            color: #fff;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .delete-btn:hover, .edit-btn:hover {
+            background-color: #c9302c;
+        }
+    </style>
+    <title>To-Do App</title>
+</head>
+<body>
+    <div class="container">
+        <div class="input-section">
+            <input type="text" id="taskTitle" placeholder="Task Title">
+            <textarea id="taskDescription" placeholder="Task Description"></textarea>
+            <button onclick="addTask()">Add Task</button>
+        </div>
+        
+        <div class="tasks-section">
+            <h2> Tasks</h2>
+            <ul id="pendingTasks"></ul>
+        </div>
+
+        <div class="tasks-section">
+            <h2>Completed Tasks</h2>
+            <ul id="completedTasks" class="completed"></ul>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            loadTasks();
+        });
+
+        function addTask() {
+            const taskTitleInput = document.getElementById('taskTitle');
+            const taskDescriptionInput = document.getElementById('taskDescription');
+
+            const taskTitle = taskTitleInput.value.trim();
+            const taskDescription = taskDescriptionInput.value.trim();
+
+            if (taskTitle !== '' && taskDescription !== '') {
+                const task = {
+                    title: taskTitle,
+                    description: taskDescription,
+                    date: new Date().toLocaleString(),
+                    completed: false
+                };
+
+                const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+                tasks.push(task);
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+
+                taskTitleInput.value = '';
+                taskDescriptionInput.value = '';
+                loadTasks();
+            }
+        }
+
+        function loadTasks() {
+            const pendingTasksList = document.getElementById('pendingTasks');
+            const completedTasksList = document.getElementById('completedTasks');
+
+            pendingTasksList.innerHTML = '';
+            completedTasksList.innerHTML = '';
+
+            const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+            tasks.forEach((task, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <h3>${task.title}</h3>
+                    <p>${task.description}</p>
+                    <span>${task.date}</span>
+                    <div>
+                        ${!task.completed ? `<button class="complete-btn" onclick="completeTask(${index})">Complete</button>` : ''}
+                        ${!task.completed ? `<button class="edit-btn" onclick="editTask(${index})">Edit</button>` : ''}
+                        <button class="delete-btn" onclick="deleteTask(${index})">Delete</button>
+                    </div>
+                `;
+
+                if (task.completed) {
+                    li.classList.add('completed');
+                    completedTasksList.appendChild(li);
+                } else {
+                    pendingTasksList.appendChild(li);
+                }
+            });
+        }
+
+        function completeTask(index) {
+            const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            tasks[index].completed = true;
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            loadTasks();
+        }
+
+        function editTask(index) {
+            const tasks = JSON.parse(localStorage.getItem('tasks')) || {};
+            const newTitle = prompt('Edit task title:', tasks[index].title);
+            const newDescription = prompt('Edit task description:', tasks[index].description);
+
+            if (newTitle !== null && newDescription !== null) {
+                tasks[index].title = newTitle;
+                tasks[index].description = newDescription;
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                loadTasks();
+            }
+        }
+
+        function deleteTask(index) {
+            const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            tasks.splice(index, 1);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            loadTasks();
+        }
+    </script>
+</body>
+</html>
+
+
+
