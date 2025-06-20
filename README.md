@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/3a7e48d1-5807-422f-b765-89e936bc11be)# ✅ Task Tracker / To-Do List Web Application
+# ✅ Task Tracker / To-Do List Web Application
 
 This is a responsive and interactive **Task Tracker / To-Do List** application built using HTML, CSS, and JavaScript. It allows users to manage their daily tasks efficiently by adding, completing, and deleting tasks in a simple web interface. The project demonstrates core front-end development skills including DOM manipulation, event handling, and responsive design.
 
